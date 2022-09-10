@@ -2,13 +2,6 @@ package gridgame;
 
 import java.util.*;
 
-/*class PlayerMoves{
-    int[] L = {-1,0};
-    int[] R = {1,0};
-    int[] F = {0,1};
-    int[] B = {0,-1};
-}*/
-
 public class Logic {
     static String[][] chessBoard = new String[5][5];
     static int[] health = new int[] { 5, 5 };
@@ -30,27 +23,51 @@ public class Logic {
         }
     }
 
+    //change board position according to position entered
     static void UpdateBoard(int[] pos, String key, String move, int turn) {
         chessBoard[pos[0]][pos[1]] = "-";
-        switch (move) {
-            case "L":
-                pos[0] = pos[0] - 1;
-                pos[1] = pos[1] + 0;
-                break;
-            case "R":
-                pos[0] = pos[0] + 1;
-                pos[1] = pos[1] + 0;
-                break;
-            case "F":
-                pos[0] = pos[0] + 0;
-                pos[1] = pos[1] + 1;
-                break;
-            case "B":
-                pos[0] = pos[0] + 0;
-                pos[1] = pos[1] - 1;
-                break;
-            default: System.out.println("Invalid Move");
+        if(turn==1){
+            switch(move){
+                case "L":
+                    pos[0] = pos[0];
+                    pos[1] = pos[1]- 1;
+                    break;
+                case "R":
+                    pos[0] = pos[0];
+                    pos[1] = pos[1] + 1;
+                    break;
+                case "F":
+                    pos[0] = pos[0] - 1;
+                    pos[1] = pos[1] ;
+                    break;
+                case "B":
+                    pos[0] = pos[0] + 1;
+                    pos[1] = pos[1];
+                    break;
+                default: System.out.println("Invalid Move");
+            }
+        }else if (turn==2){
+            switch(move){
+                case "L":
+                    pos[0] = pos[0];
+                    pos[1] = pos[1]+ 1;
+                    break;
+                case "R":
+                    pos[0] = pos[0];
+                    pos[1] = pos[1] - 1;
+                    break;
+                case "F":
+                    pos[0] = pos[0] + 1;
+                    pos[1] = pos[1] ;
+                    break;
+                case "B":
+                    pos[0] = pos[0] - 1;
+                    pos[1] = pos[1];
+                    break;
+                default: System.out.println("Invalid Move");
+            }
         }
+        
 
         if (chessBoard[pos[0]][pos[1]] != "-") {
             if (turn == 1)
@@ -63,16 +80,15 @@ public class Logic {
         PrintMatrix();
     }
 
+    //Intial input setter accoeding to payer input data
     static void InputSetter() {
         Scanner sc = new Scanner(System.in);
 
         for (int i = 0; i < 2; i++) {
             System.out.println("Player " + (i + 1) + " Input:");
-            String[] data = new String[5];
-            for (int j = 0; j < 5; j++) {
-                data[j] = sc.next();
-            }
-
+            //sc.nextLine();
+            String inputString = sc.nextLine();
+            String[] data = inputString.split(",");
             String temp = "";
             int indx = 0;
             if (i == 0) {
@@ -91,18 +107,21 @@ public class Logic {
         }
     }
 
+    //check the position of entered player position and return that
     static int[] findPos(String key) {
-        int[] pos = new int[2];
+        int[] tpos = new int[2];
+        key = key.trim();
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
-                if (chessBoard[i][j].equals(key)) {
-                    pos[0] = i;
-                    pos[1] = j;
-                    return pos;
+                String match = chessBoard[i][j].trim();
+                if (key.equals(match)) {
+                    tpos[0] = i;
+                    tpos[1] = j;
+                    return tpos;
                 }
             }
         }
-        return pos;
+        return tpos;
     }
 
     public static void main(String[] args) {
@@ -111,14 +130,16 @@ public class Logic {
         InputSetter();
 
         int turn = 1;
-
+        //Game play loop
         while (health[0] > 0 && health[1] > 0) {
+            //check which player's turn it is
             if (turn == 1) {
                 System.out.print("Player A's Move:");
                 String move = sc.next();
                 String[] breakInput = move.split(":");
                 String key = "A-" + breakInput[0];
                 int[] pos = findPos(key);
+                System.out.println(Arrays.toString(pos));
                 UpdateBoard(pos, key, breakInput[1], 1);
                 if (health[1] == 0)
                     System.out.println("A is winner");
@@ -135,5 +156,6 @@ public class Logic {
                 turn = 1;
             }
         }
+        sc.close();
     }
 }
